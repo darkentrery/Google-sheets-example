@@ -1,0 +1,20 @@
+version: '3.9'
+
+volumes:
+  postgres_data_google_sheets:
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    container_name: postgres_google_sheets
+    restart: always
+    ports:
+      - "5448:5432"
+    volumes:
+      - postgres_data_google_sheets:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+
+
