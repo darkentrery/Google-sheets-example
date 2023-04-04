@@ -13,6 +13,7 @@ class Supply(models.Model):
     class Meta:
         verbose_name = "Supply"
         verbose_name_plural = "Supplies"
+        ordering = ["number",]
 
     def __str__(self):
         return f"{self.number} - {self.order}"

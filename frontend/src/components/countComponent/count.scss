@@ -1,4 +1,25 @@
 .count-component {
   display: flex;
-  flex: 1 0 calc(100vh - 150px);
+  flex: 0 0 200px;
+  flex-direction: column;
+
+  .head {
+    display: flex;
+    background-color: black;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    border: 1px solid #66d3c7;
+    font-size: 22px;
+    flex: 0 0 50px;
+  }
+  .row {
+    display: flex;
+    flex: 0 0 100px;
+    text-align: center;
+    justify-content: center;
+    font-size: 32px;
+    border: 1px solid #66d3c7;
+    align-items: center;
+  }
 }

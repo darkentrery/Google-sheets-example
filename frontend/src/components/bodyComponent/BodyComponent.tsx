@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import TableComponent, {Supply} from "../tableComponent/TableComponent";
 import SupplyService from "../../services/supplyService";
+import CountComponent from "../countComponent/CountComponent";
 
 
 const BodyComponent = () => {
@@ -15,7 +16,7 @@ const BodyComponent = () => {
     return (
         <div className={"body-component"}>
             <TableComponent supplies={supplies}/>
-
+            <CountComponent count={supplies.length}/>
         </div>
     )
 }
