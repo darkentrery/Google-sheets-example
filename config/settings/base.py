@@ -99,8 +99,8 @@ STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     str(APPS_DIR.path("static")),
-    # str(FRONT_DIR.path("build/static")),
-    # str(FRONT_DIR.path("build")),
+    str(FRONT_DIR.path("build/static")),
+    str(FRONT_DIR.path("build")),
 ]
 
 STATICFILES_FINDERS = [
@@ -190,3 +190,7 @@ AUTH_PASSWORD_VALIDATORS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 loguru.logger.add(f"{BASE_DIR}/logs.log", level='DEBUG', format="{time} {level} {message}")
+
+TELEGRAM_TOKEN = env("TELEGRAM_TOKEN")
+
+TELEGRAM_ID = env("TELEGRAM_ID")

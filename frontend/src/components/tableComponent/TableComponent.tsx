@@ -30,7 +30,13 @@ const TableComponent: FC<TableProps> = ({supplies}) => {
                         <div className={"cell cell-2"}>{supply.order}</div>
                         <div className={"cell cell-3"}>{supply.cost}</div>
                         <div className={"cell cell-4"}>{supply.cost_rub}</div>
-                        <div className={"cell cell-5"}>{supply.date}</div>
+                        <div className={"cell cell-5"}>
+                            {new Date(supply.date).toLocaleDateString('en-GB', {
+                                day: 'numeric',
+                                month: 'numeric',
+                                year: 'numeric'
+                            }).split("/").join(".")}
+                        </div>
                     </div>
                 ))}
             </div>

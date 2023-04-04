@@ -1,7 +1,6 @@
-import datetime
 import os
+
 import django
-from django.utils import timezone
 from loguru import logger
 
 
@@ -11,15 +10,14 @@ def main() -> None:
     django.setup()
 
     from scripts.google_sheet import google_sheet_to_db
-    time = timezone.now()
-    google_sheet_to_db()
-    # while True:
-    #     if time + datetime.timedelta(minutes=1) < timezone.now():
-    #         try:
-    #             get_info()
-    #         except Exception as e:
-    #             logger.error(e)
-    #         time = timezone.now()
+    from scripts.google_sheet import check_dates
+
+    while True:
+        try:
+            google_sheet_to_db()
+            check_dates()
+        except Exception as e:
+            logger.error(e)
 
 
 if __name__ == "__main__":

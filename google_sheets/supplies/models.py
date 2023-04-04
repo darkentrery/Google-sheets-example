@@ -9,6 +9,7 @@ class Supply(models.Model):
     cost = models.FloatField(_("Cost"))
     date = models.DateField(_("Date of supply"))
     cost_rub = models.FloatField(_("Cost in RUB"))
+    is_send = models.BooleanField(_("Expired message is send"), default=False)
 
     class Meta:
         verbose_name = "Supply"
