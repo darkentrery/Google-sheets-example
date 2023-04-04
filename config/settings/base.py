@@ -10,6 +10,8 @@ ROOT_DIR = environ.Path(__file__) - 3
 
 APPS_DIR = ROOT_DIR.path("google_sheets")
 
+FRONT_DIR = ROOT_DIR.path("frontend")
+
 env = environ.Env()
 
 env.read_env(str(ROOT_DIR.path(".env")))
@@ -66,10 +68,12 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
 ]
 
 THIRD_PARTY_APPS = [
     'loguru',
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -81,6 +85,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -94,6 +99,8 @@ STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     str(APPS_DIR.path("static")),
+    # str(FRONT_DIR.path("build/static")),
+    # str(FRONT_DIR.path("build")),
 ]
 
 STATICFILES_FINDERS = [
@@ -109,10 +116,17 @@ MEDIA_URL = "/media/"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [str(APPS_DIR.path("templates")),],
+        "DIRS": [
+            str(APPS_DIR.path("templates")),
+            str(FRONT_DIR.path("build")),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "debug": DEBUG,
+            # "loaders": [
+            #     "django.template.loaders.filesystem.Loader",
+            #     "django.template.loaders.app_directories.Loader",
+            # ],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -129,6 +143,19 @@ TEMPLATES = [
 
 FIXTURE_DIRS = (str(APPS_DIR.path("fixtures")),)
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES' : (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+}
+
 SESSION_COOKIE_HTTPONLY = False
 
 SESSION_COOKIE_AGE = 86400
@@ -141,7 +168,7 @@ SECURE_BROWSER_XSS_FILTER = True
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600
 
-X_FRAME_OPTIONS = "DENY"
+# X_FRAME_OPTIONS = "DENY"
 
 ADMIN_URL = "admin/"
 
