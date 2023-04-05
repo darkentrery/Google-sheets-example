@@ -1,16 +1,13 @@
 from __future__ import print_function
 
 import datetime
-import os.path
 from typing import Union
 
 import requests
 import xml.etree.ElementTree as ET
 from django.conf import settings
 from django.utils import timezone
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from loguru import logger
@@ -27,33 +24,12 @@ SAMPLE_RANGE_NAME = 'A2:E'
 
 
 def get_data_from_google_sheet() -> list:
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
-    creds = None
     values = []
-    token_file = settings.ROOT_DIR + 'token.json'
-    credentials_file = settings.ROOT_DIR + 'credentials.json'
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists(token_file):
-        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open(token_file, 'w') as token:
-            token.write(creds.to_json())
+    token_file = settings.ROOT_DIR + 'servicetoken.json'
+    creds = ServiceAccountCredentials.from_json_keyfile_name(token_file, SCOPES)
 
     try:
         service = build('sheets', 'v4', credentials=creds)
-
-        # Call the Sheets API
         sheet = service.spreadsheets()
         result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID, range=SAMPLE_RANGE_NAME).execute()
         values = result.get('values', [])

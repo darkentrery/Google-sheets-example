@@ -1,0 +1,53 @@
+FROM python:3.11-alpine
+FROM node:18-alpine as build
+
+ENV BASE_DIR=/usr/src/app
+WORKDIR $BASE_DIR
+RUN mkdir -p $WORKDIR/static
+RUN mkdir -p $WORKDIR/media
+RUN mkdir -p $WORKDIR/frontend
+ENV FRONT_DIR=/usr/src/app/frontend
+
+WORKDIR $BASE_DIR
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install psycopg2 dependencies
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev
+
+# add bash
+RUN apk add --no-cache bash
+
+# install pip
+RUN set -xe \
+    && apk update \
+    && apk add py3-pip
+
+# copy project
+# TODO: exclude static files
+COPY ./config/ $BASE_DIR/config/
+COPY ./google_sheets/ $BASE_DIR/google_sheets/
+COPY ./requirements/ $BASE_DIR/requirements/
+COPY ./manage.py $BASE_DIR
+COPY ./scripts/ $BASE_DIR/scripts/
+COPY ./run.py $BASE_DIR
+COPY ./servicetoken.json $BASE_DIR
+
+COPY ./frontend/public/ $FRONT_DIR/public/
+COPY ./frontend/src/ $FRONT_DIR/src/
+COPY ./frontend/tsconfig.json $FRONT_DIR
+COPY ./frontend/package.json $FRONT_DIR
+COPY ./frontend/yarn.lock $FRONT_DIR
+
+# install dependencies
+RUN pip install --upgrade pip
+RUN pip install -r $BASE_DIR/requirements/base.txt
+
+WORKDIR $FRONT_DIR
+
+RUN yarn
+RUN yarn build
+
+WORKDIR $BASE_DIR

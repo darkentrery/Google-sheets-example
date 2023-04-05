@@ -2,6 +2,8 @@ version: '3.9'
 
 volumes:
   postgres_data_google_sheets:
+  static_google_sheets:
+  media_google_sheets:
 
 services:
   postgres:
@@ -10,11 +12,24 @@ services:
       dockerfile: Dockerfile.postgres
     container_name: postgres_google_sheets
     restart: always
-    ports:
-      - "5448:5432"
     volumes:
       - postgres_data_google_sheets:/var/lib/postgresql/data/
     env_file:
       - ./.env
 
-
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: web_google_sheets
+    command: bash -c "python3 manage.py collectstatic --noinput && python3 manage.py migrate && python3 run.py & python3 manage.py runserver 0.0.0.0:8000"
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - static_google_sheets:/usr/src/app
+      - media_google_sheets:/usr/src/app
+    env_file:
+      - ./.env
